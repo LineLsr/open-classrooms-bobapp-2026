@@ -53,3 +53,30 @@ jobs:
         with:
           name: frontend-coverage
           path: front/coverage/bobapp/
+
+  sonarcloud-analysis:
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend]
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Téléchargement du rapport JaCoCo
+        uses: actions/download-artifact@v4
+        with:
+          name: jacoco-report
+          path: back/target/site/jacoco/
+
+      - name: Téléchargement du rapport de couverture front
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-coverage
+          path: front/coverage/bobapp/
+
+      - name: Analyse SonarCloud
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
