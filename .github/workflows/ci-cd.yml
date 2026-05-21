@@ -28,3 +28,28 @@ jobs:
         with:
           name: jacoco-report
           path: back/target/site/jacoco/
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Installation des dépendances
+        working-directory: front
+        run: npm ci
+
+      - name: Lancement des tests et génération de la couverture
+        working-directory: front
+        run: npm run test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+      - name: Upload du rapport de couverture front
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: front/coverage/bobapp/
