@@ -115,9 +115,12 @@ jobs:
       - name: Analyse SonarCloud
         uses: SonarSource/sonarcloud-github-action@master
         with:
-          # La Quality Gate est toujours attendue : le job échoue si le seuil n'est pas atteint,
-          # ce qui bloque le merge de la PR via les status checks obligatoires.
-          args: -Dsonar.qualitygate.wait=true
+          # Sur pull_request : attend la Quality Gate et fait échouer le job si elle n'est pas passée.
+          # Cela bloque le merge de la PR via les status checks obligatoires.
+          # Sur push (dev) : analyse lancée sans attente — limitation du plan gratuit SonarCloud
+          # qui ne supporte pas la vérification de Quality Gate sur les branches courtes.
+          args: >
+            ${{ github.event_name == 'pull_request' && '-Dsonar.qualitygate.wait=true' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Permet à SonarCloud de commenter les PR
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}     # Token d'authentification SonarCloud (GitHub Secret)

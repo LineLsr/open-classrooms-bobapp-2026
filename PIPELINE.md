@@ -74,14 +74,21 @@ Lance les tests unitaires du front-end Angular et génère le rapport de couvert
 ### Job 3 — `sonarcloud-analysis`
 **Déclencheur :** après la réussite de `test-backend` ET `test-frontend`
 
-Analyse la qualité du code back et front via SonarCloud. La Quality Gate est toujours attendue :
-si les seuils ne sont pas atteints, le job échoue et bloque le merge de la PR.
+Analyse la qualité du code back et front via SonarCloud.
+
+Sur une **Pull Request vers `main`**, la Quality Gate est attendue : si les seuils ne sont pas
+atteints, le job échoue et bloque le merge via les status checks obligatoires.
+
+Sur un **push vers `dev`**, l'analyse est lancée mais la Quality Gate n'est pas attendue.
+Il s'agit d'une limitation du plan gratuit SonarCloud : l'API de vérification de Quality Gate
+n'est pas disponible pour les branches courtes ("short-lived branches"). Les résultats restent
+visibles dans l'interface SonarCloud.
 
 Étapes :
 - Checkout complet de l'historique Git (nécessaire pour SonarCloud)
 - Téléchargement des rapports de couverture JaCoCo et lcov depuis les artefacts
 - Compilation du back-end pour fournir les classes Java à SonarCloud
-- Envoi du code et des métriques à SonarCloud avec attente du résultat de la Quality Gate
+- Envoi du code et des métriques à SonarCloud (avec attente de la Quality Gate sur PR uniquement)
 
 ---
 
