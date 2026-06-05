@@ -19,8 +19,8 @@ jobs:
   # ─────────────────────────────────────────────
   test-backend:
     runs-on: ubuntu-latest  # VM Linux fournie par GitHub
-    # Ne s'exécute pas quand la PR est fermée sans merge (pas de code à tester)
-    if: github.event_name == 'push' || github.event.action != 'closed'
+    # Skip si la PR est fermée sans merge (inutile de tester du code non mergé)
+    if: github.event_name == 'push' || github.event.action != 'closed' || github.event.pull_request.merged == true
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4  # Récupère le code source du dépôt
@@ -47,7 +47,7 @@ jobs:
   # ─────────────────────────────────────────────
   test-frontend:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event.action != 'closed'
+    if: github.event_name == 'push' || github.event.action != 'closed' || github.event.pull_request.merged == true
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
